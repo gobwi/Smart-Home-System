@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Camera, X } from 'lucide-react';
 import { useCamera } from '@/hooks/useCamera';
 import Button from './Button';
@@ -18,7 +18,6 @@ export default function FaceCamera({
   capturedImage,
 }: FaceCameraProps) {
   const { videoRef, isStreaming, error, startCamera, stopCamera, captureImage } = useCamera();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (!showPreview) {
@@ -93,7 +92,6 @@ export default function FaceCamera({
             <p className="text-muted-foreground">Starting camera...</p>
           </div>
         )}
-        <canvas ref={canvasRef} className="hidden" />
       </div>
       {isStreaming && (
         <div className="mt-4 flex justify-center">

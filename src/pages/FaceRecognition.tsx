@@ -37,18 +37,20 @@ export default function FaceRecognition() {
           {isRecognizing ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"></div>
-              <p className="text-muted-foreground">Waiting for face...</p>
+              <p className="text-muted-foreground">Authenticating face…</p>
             </div>
           ) : (
-            <FaceCamera
-              onCapture={handleAuthenticate}
-              onClose={() => setShowCamera(false)}
-            />
-          )}
-          {error && (
-            <div className="mt-4 p-4 bg-destructive/10 text-destructive rounded-lg text-center">
-              {error}
-            </div>
+            <>
+              <FaceCamera
+                onCapture={handleAuthenticate}
+                onClose={() => setShowCamera(false)}
+              />
+              {error && (
+                <div className="mt-4 p-4 bg-destructive/10 text-destructive rounded-lg text-center">
+                  {error}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

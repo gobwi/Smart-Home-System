@@ -35,8 +35,8 @@ export const useFaceStore = create<FaceState>((set) => ({
     try {
       const result = await faceService.authenticate(image);
       // Persist the JWT so subsequent API calls are authenticated
-      if (result.authenticated && (result as FaceAuthenticationResponse & { token?: string }).token) {
-        localStorage.setItem('auth_token', (result as FaceAuthenticationResponse & { token?: string }).token!);
+      if (result.authenticated && result.token) {
+        localStorage.setItem('auth_token', result.token);
       }
       set({
         isRecognizing: false,

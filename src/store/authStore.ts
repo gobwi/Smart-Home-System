@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { User } from '@/types/auth.types';
 import { authService } from '@/services/authService';
+import api from '@/services/api';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -82,11 +83,24 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  checkAuth: () => {
+  checkAuth: async () => {
     const token = authService.getToken();
-    set({
-      isAuthenticated: !!token,
-    });
+    if (!token) {
+      set({ isAuthenticated: false, user: null });
+      return;
+    }
+    try {
+      const response = await api.get<{ success: boolean; user?: import('@/types/auth.types').User }>('/auth/me');
+      if (response.data.success && response.data.user) {
+        set({ isAuthenticated: true, user: response.data.user });
+      } else {
+        localStorage.removeItem('auth_token');
+        set({ isAuthenticated: false, user: null });
+      }
+    } catch {
+      localStorage.removeItem('auth_token');
+      set({ isAuthenticated: false, user: null });
+    }
   },
 
   clearError: () => {

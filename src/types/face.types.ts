@@ -16,5 +16,6 @@ export interface FaceAuthenticationResponse {
     id: string;
     username: string;
   };
+  token?: string;   // JWT returned by backend on successful face auth
   message?: string;
 }
