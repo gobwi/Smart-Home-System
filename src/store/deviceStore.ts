@@ -11,7 +11,7 @@ interface DeviceState {
   toggleDevice: (deviceId: DeviceId, status: DeviceStatus) => Promise<void>;
 }
 
-export const useDeviceStore = create<DeviceState>((set, get) => ({
+export const useDeviceStore = create<DeviceState>((set) => ({
   devices: [
     { id: 'ac', name: 'AC', status: 'off' },
     { id: 'fan', name: 'Fan', status: 'off' },
@@ -43,7 +43,7 @@ export const useDeviceStore = create<DeviceState>((set, get) => ({
   toggleDevice: async (deviceId: DeviceId, status: DeviceStatus) => {
     try {
       await deviceService.toggleDevice({ deviceId, status });
-      
+
       set((state) => ({
         devices: state.devices.map((device) =>
           device.id === deviceId ? { ...device, status } : device

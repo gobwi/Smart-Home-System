@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, UserPlus, Loader2 } from 'lucide-react';
+import { UserPlus, Loader2 } from 'lucide-react';
 import Button from '@/components/Button';
 import FaceCamera from '@/components/FaceCamera';
 import { useFaceStore } from '@/store/faceStore';

@@ -1,7 +1,6 @@
 import type {
   LoginResponse,
   SignupResponse,
-  User,
 } from '@/types/auth.types';
 import type {
   FaceAuthenticationResponse,
@@ -21,9 +20,9 @@ function delay(ms: number): Promise<void> {
 }
 
 export const mockAuth = {
-  async login(username: string, password: string): Promise<LoginResponse> {
+  async login(username: string, _password: string): Promise<LoginResponse> {
     await delay(500);
-    
+
     // Simulate successful login
     return {
       success: true,
@@ -40,10 +39,10 @@ export const mockAuth = {
   async signup(
     username: string,
     email: string,
-    password: string
+    _password: string
   ): Promise<SignupResponse> {
     await delay(500);
-    
+
     // Simulate successful signup
     return {
       success: true,
@@ -60,11 +59,11 @@ export const mockAuth = {
   async signupWithFace(
     username: string,
     email: string,
-    password: string,
+    _password: string,
     _faceImage: Blob
   ): Promise<SignupResponse> {
     await delay(1000);
-    
+
     // Simulate successful signup with face registration
     return {
       success: true,
@@ -82,7 +81,7 @@ export const mockAuth = {
 export const mockFace = {
   async authenticate(_image: Blob): Promise<FaceAuthenticationResponse> {
     await delay(1500);
-    
+
     // Simulate successful face recognition
     return {
       success: true,
@@ -97,10 +96,10 @@ export const mockFace = {
 
   async register(
     _image: Blob,
-    username: string
+    _username: string
   ): Promise<FaceRegistrationResponse> {
     await delay(1000);
-    
+
     // Simulate successful face registration
     return {
       success: true,
@@ -113,7 +112,7 @@ export const mockFace = {
 export const mockDevices = {
   async getDevices(): Promise<Device[]> {
     await delay(300);
-    
+
     // Return mock devices
     return [
       { id: 'ac', name: 'Air Conditioner', status: 'off' },
@@ -127,14 +126,14 @@ export const mockDevices = {
     status: DeviceStatus
   ): Promise<ToggleDeviceResponse> {
     await delay(200);
-    
+
     // Simulate device toggle
     const deviceNames: Record<DeviceId, string> = {
       ac: 'Air Conditioner',
       fan: 'Fan',
       lights: 'Lights',
     };
-    
+
     return {
       success: true,
       device: {
@@ -150,13 +149,13 @@ export const mockDevices = {
 export const mockSensors = {
   async getSensors(): Promise<Sensor[]> {
     await delay(300);
-    
+
     // Return mock sensor data with some variation
     const baseTemp = 26;
     const tempVariation = Math.floor(Math.random() * 5) - 2; // -2 to +2
     const temperature = baseTemp + tempVariation;
     const motionDetected = Math.random() > 0.7; // 30% chance of motion
-    
+
     return [
       {
         id: 'temperature',
