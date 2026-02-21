@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Settings, Thermometer, MotionSensor } from 'lucide-react';
+import { Settings, Thermometer, Activity, AirVent, Wind, Lightbulb } from 'lucide-react';
 import DeviceCard from '@/components/DeviceCard';
 import SensorCard from '@/components/SensorCard';
 import { useDeviceStore } from '@/store/deviceStore';
@@ -12,7 +12,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchDevices();
     fetchSensors();
-    
+
     // Refresh sensors periodically
     const interval = setInterval(() => {
       fetchSensors();
@@ -46,14 +46,21 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold">Device Controls</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {devices.map((device) => (
-            <DeviceCard
-              key={device.id}
-              device={device}
-              onToggle={handleToggleDevice}
-              isLoading={isToggling[device.id]}
-            />
-          ))}
+          {devices.map((device) => {
+            const icon =
+              device.id === 'ac' ? <AirVent className="h-6 w-6" /> :
+                device.id === 'fan' ? <Wind className="h-6 w-6" /> :
+                  <Lightbulb className="h-6 w-6" />;
+            return (
+              <DeviceCard
+                key={device.id}
+                device={device}
+                icon={icon}
+                onToggle={handleToggleDevice}
+                isLoading={isToggling[device.id]}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -62,11 +69,18 @@ export default function Dashboard() {
           <Thermometer className="h-6 w-6" />
           <h2 className="text-2xl font-semibold">Sensor Monitoring</h2>
         </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          {sensors.map((sensor) => (
-            <SensorCard key={sensor.id} sensor={sensor} />
-          ))}
-        </div>
+        {sensors.length === 0 ? (
+          <div className="flex items-center gap-2 text-muted-foreground p-4 bg-muted rounded-lg">
+            <Activity className="h-5 w-5 animate-pulse" />
+            <span>Waiting for sensor data from ESP32…</span>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {sensors.map((sensor) => (
+              <SensorCard key={sensor.id} sensor={sensor} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

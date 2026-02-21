@@ -1,14 +1,16 @@
+import React from 'react';
 import { Power } from 'lucide-react';
 import type { Device } from '@/types/device.types';
 import { cn } from '@/utils/cn';
 
 interface DeviceCardProps {
   device: Device;
+  icon?: React.ReactNode;
   onToggle: (deviceId: Device['id'], status: Device['status']) => void;
   isLoading?: boolean;
 }
 
-export default function DeviceCard({ device, onToggle, isLoading }: DeviceCardProps) {
+export default function DeviceCard({ device, icon, onToggle, isLoading }: DeviceCardProps) {
   const isOn = device.status === 'on';
 
   const handleToggle = (): void => {
@@ -44,7 +46,7 @@ export default function DeviceCard({ device, onToggle, isLoading }: DeviceCardPr
             isLoading && 'opacity-50 cursor-not-allowed'
           )}
         >
-          <Power className={cn('h-6 w-6 transition-transform', isOn && 'scale-110')} />
+          {icon ?? <Power className={cn('h-6 w-6 transition-transform', isOn && 'scale-110')} />}
         </button>
       </div>
     </div>

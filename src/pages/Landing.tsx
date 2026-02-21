@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {CameraIcon, UserPlus, Zap} from "lucide-react";
+import { CameraIcon, UserPlus, Zap } from "lucide-react";
 import Button from '@/components/Button';
 import FaceCamera from '@/components/FaceCamera';
 import { useFaceStore } from '@/store/faceStore';
@@ -22,9 +22,11 @@ export default function Landing() {
         navigate(ROUTES.DASHBOARD);
       } else {
         alert(result.message || 'Face recognition failed. Please try again.');
+        setShowCamera(false);
       }
     } catch (err) {
       alert(error || 'Failed to authenticate. Please try manual login.');
+      setShowCamera(false);
     }
   };
 
