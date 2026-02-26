@@ -1,0 +1,16 @@
+# Core web framework
+flask==3.0.3
+flask-cors==4.0.1
+
+# Face recognition — installs dlib under the hood.
+# dlib requires cmake and a C++ compiler. See README for platform-specific notes.
+face_recognition==1.3.0
+
+# Image handling
+Pillow==10.4.0
+
+# Numerical computing (used for embedding distance calculations)
+numpy==1.26.4
+
+# JWT token generation and verification
+PyJWT==2.9.0

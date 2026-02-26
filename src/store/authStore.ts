@@ -16,6 +16,20 @@ interface AuthState {
   clearError: () => void;
 }
 
+/** Pull a human-readable message out of whatever the catch block gives us. */
+function extractMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === 'object') {
+    // Backend returned a structured error object like { success: false, message: '...' }
+    if ('message' in error && typeof (error as { message: unknown }).message === 'string') {
+      return (error as { message: string }).message;
+    }
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return fallback;
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   user: null,
@@ -39,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         throw new Error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      const errorMessage = extractMessage(error, 'Login failed');
       set({ isLoading: false, error: errorMessage });
       throw error;
     }
@@ -62,7 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         throw new Error(errorMessage);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Signup failed';
+      const errorMessage = extractMessage(error, 'Signup failed');
       set({ isLoading: false, error: errorMessage });
       throw error;
     }
@@ -90,7 +104,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       return;
     }
     try {
-      const response = await api.get<{ success: boolean; user?: import('@/types/auth.types').User }>('/auth/me');
+      const response = await api.get<{ success: boolean; user?: User }>('/auth/me');
       if (response.data.success && response.data.user) {
         set({ isAuthenticated: true, user: response.data.user });
       } else {

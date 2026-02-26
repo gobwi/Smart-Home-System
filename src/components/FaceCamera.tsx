@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Camera, X } from 'lucide-react';
 import { useCamera } from '@/hooks/useCamera';
 import Button from './Button';
@@ -17,7 +17,9 @@ export default function FaceCamera({
   showPreview = false,
   capturedImage,
 }: FaceCameraProps) {
-  const { videoRef, isStreaming, error, startCamera, stopCamera, captureImage } = useCamera();
+  const { videoRef, isStreaming, error, startCamera, stopCamera, captureImage } =
+    useCamera();
+  const [captureError, setCaptureError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!showPreview) {
@@ -26,14 +28,18 @@ export default function FaceCamera({
     return () => {
       stopCamera();
     };
-  }, [showPreview]);
+  }, [showPreview, startCamera, stopCamera]);
 
-  const handleCapture = (): void => {
+  const handleCapture = useCallback((): void => {
+    setCaptureError(null);
     const imageBlob = captureImage();
     if (imageBlob) {
       onCapture(imageBlob);
+    } else {
+      // Camera stream exists but frame isn't ready yet — give the user feedback
+      setCaptureError('Camera is not ready yet. Please wait a moment and try again.');
     }
-  };
+  }, [captureImage, onCapture]);
 
   if (error) {
     return (
@@ -82,10 +88,7 @@ export default function FaceCamera({
           autoPlay
           playsInline
           muted
-          className={cn(
-            'w-full h-auto',
-            !isStreaming && 'hidden'
-          )}
+          className={cn('w-full h-auto', !isStreaming && 'hidden')}
         />
         {!isStreaming && (
           <div className="flex items-center justify-center h-64">
@@ -94,11 +97,14 @@ export default function FaceCamera({
         )}
       </div>
       {isStreaming && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex flex-col items-center gap-2">
           <Button onClick={handleCapture} size="lg" className="gap-2">
             <Camera className="h-5 w-5" />
             Capture Face
           </Button>
+          {captureError && (
+            <p className="text-sm text-destructive text-center">{captureError}</p>
+          )}
         </div>
       )}
     </div>

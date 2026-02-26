@@ -13,12 +13,8 @@ export const deviceService = {
     if (MOCK_MODE) {
       return mockDevices.toggleDevice(request.deviceId, request.status);
     }
-
     try {
-      const response = await api.post<ToggleDeviceResponse>(
-        '/device/toggle',
-        request
-      );
+      const response = await api.post<ToggleDeviceResponse>('/device/toggle', request);
       return response.data;
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error) {
@@ -33,13 +29,12 @@ export const deviceService = {
     if (MOCK_MODE) {
       return mockDevices.getDevices();
     }
-
     try {
       const response = await api.get<Device[]>('/device/list');
       return response.data;
-    } catch (error: unknown) {
-      // Fallback to mock data if API fails
-      return mockDevices.getDevices();
+    } catch {
+      // Return empty rather than falling back to fake mock data
+      return [];
     }
   },
 
@@ -47,13 +42,11 @@ export const deviceService = {
     if (MOCK_MODE) {
       return mockSensors.getSensors();
     }
-
     try {
       const response = await api.get<Sensor[]>('/sensors');
       return response.data;
-    } catch (error: unknown) {
-      // Fallback to mock data if API fails
-      return mockSensors.getSensors();
+    } catch {
+      return [];
     }
   },
 };

@@ -19,6 +19,19 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// ---------------------------------------------------------------------------
+// In-memory face store for mock mode.
+// Persists registrations for the lifetime of the browser tab so that
+// register → authenticate actually works end-to-end without a real backend.
+// ---------------------------------------------------------------------------
+interface MockFaceRecord {
+  faceId: string;
+  username: string;
+  userId: string;
+}
+
+const registeredFaces: MockFaceRecord[] = [];
+
 export const mockAuth = {
   async login(username: string, _password: string): Promise<LoginResponse> {
     await delay(500);
@@ -82,29 +95,48 @@ export const mockFace = {
   async authenticate(_image: Blob): Promise<FaceAuthenticationResponse> {
     await delay(1500);
 
-    // Simulate successful face recognition
+    // Fail clearly if no faces have been registered yet — previously this
+    // always returned success, masking the broken register → authenticate flow.
+    if (registeredFaces.length === 0) {
+      return {
+        success: false,
+        authenticated: false,
+        message: 'No faces registered. Please register a face first.',
+      };
+    }
+
+    // In mock mode we can't do real face matching, so simulate a successful
+    // match against the most recently registered face.
+    const matched = registeredFaces[registeredFaces.length - 1];
+
     return {
       success: true,
       authenticated: true,
       user: {
-        id: '1',
-        username: 'Demo User',
+        id: matched.userId,
+        username: matched.username,
       },
+      token: 'mock_token_' + Date.now(),
       message: 'Face recognized successfully',
     };
   },
 
   async register(
     _image: Blob,
-    _username: string
+    username: string
   ): Promise<FaceRegistrationResponse> {
     await delay(1000);
 
-    // Simulate successful face registration
+    const faceId = 'face_' + Date.now();
+    const userId = 'user_' + Date.now();
+
+    // Persist the registration so authenticate can find it
+    registeredFaces.push({ faceId, username, userId });
+
     return {
       success: true,
       message: 'Face registered successfully',
-      faceId: 'face_' + Date.now(),
+      faceId,
     };
   },
 };
